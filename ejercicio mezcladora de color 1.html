@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mezcladora de Colores - Teoría del Color</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Comic Sans MS', cursive;
+      background: linear-gradient(to right, #ffe0f0, #d0f0ff);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: 2em;
+      color: #ff1493;
+    }
+
+    .flower-bg {
+      width: 100%;
+      max-width: 800px;
+      background: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80') no-repeat center/cover;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      margin: 20px;
+      text-align: center;
+    }
+
+    #question {
+      font-size: 1.4em;
+      margin: 20px 0;
+    }
+
+    .options {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .option-btn {
+      background-color: #fff;
+      border: 2px solid #ff69b4;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s;
+    }
+
+    .option-btn:hover {
+      background-color: #ffb6c1;
+      color: white;
+    }
+
+    #score {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #result {
+      font-size: 1.2em;
+      margin-top: 15px;
+    }
+
+    #nextBtn {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #32cd32;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #nextBtn:hover {
+      background-color: #228b22;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌺 Mezcladora de Colores 🌈</h1>
+  <div class="flower-bg">
+    <div id="question">Cargando pregunta...</div>
+    <div class="options" id="options"></div>
+    <div id="result"></div>
+    <button id="nextBtn">Siguiente</button>
+    <div id="score">Puntuación: 0 / 20</div>
+  </div>
+
+  <script>
+    const preguntas = [
+      {
+        pregunta: "¿Qué color resulta de mezclar rojo y azul?",
+        opciones: ["Violeta", "Verde", "Naranja", "Gris"],
+        correcta: "Violeta"
+      },
+      {
+        pregunta: "¿Cuál es el color complementario del azul?",
+        opciones: ["Rojo", "Verde", "Naranja", "Amarillo"],
+        correcta: "Naranja"
+      },
+      {
+        pregunta: "¿Qué color obtienes al mezclar amarillo y rojo?",
+        opciones: ["Verde", "Rosa", "Naranja", "Violeta"],
+        correcta: "Naranja"
+      },
+      {
+        pregunta: "¿Cuál es el color complementario del verde?",
+        opciones: ["Rojo", "Azul", "Morado", "Rosa"],
+        correcta: "Rojo"
+      },
+      {
+        pregunta: "¿Qué color se obtiene al mezclar azul y amarillo?",
+        opciones: ["Verde", "Naranja", "Rojo", "Negro"],
+        correcta: "Verde"
+      },
+      {
+        pregunta: "¿Cuál es el color complementario del rojo?",
+        opciones: ["Azul", "Verde", "Naranja", "Amarillo"],
+        correcta: "Verde"
+      }
+    ];
+
+    let puntuación = 0;
+    let preguntaActual = 0;
+    let preguntasUsadas = [];
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const scoreEl = document.getElementById('score');
+    const resultEl = document.getElementById('result');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function cargarPregunta() {
+      resultEl.textContent = '';
+      nextBtn.style.display = 'none';
+
+      if (puntuación >= 20) {
+        questionEl.textContent = "¡Felicidades! Has completado el reto.";
+        optionsEl.innerHTML = '';
+        return;
+      }
+
+      let idx;
+      do {
+        idx = Math.floor(Math.random() * preguntas.length);
+      } while (preguntasUsadas.includes(idx) && preguntasUsadas.length < preguntas.length);
+
+      preguntasUsadas.push(idx);
+      const actual = preguntas[idx];
+      preguntaActual = idx;
+
+      questionEl.textContent = actual.pregunta;
+      optionsEl.innerHTML = '';
+      actual.opciones.forEach(op => {
+        const btn = document.createElement('button');
+        btn.textContent = op;
+        btn.classList.add('option-btn');
+        btn.onclick = () => evaluarRespuesta(op, actual.correcta);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function evaluarRespuesta(seleccionada, correcta) {
+      if (seleccionada === correcta) {
+        resultEl.textContent = "✅ ¡Correcto!";
+        puntuación += 5;
+      } else {
+        resultEl.textContent = `❌ Incorrecto. La respuesta correcta era: ${correcta}`;
+      }
+      scoreEl.textContent = `Puntuación: ${puntuación} / 20`;
+      nextBtn.style.display = 'inline-block';
+    }
+
+    nextBtn.onclick = cargarPregunta;
+
+    cargarPregunta();
+  </script>
+</body>
+</html>
